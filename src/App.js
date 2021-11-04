@@ -3,15 +3,12 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 import './styles/App.css';
 import Header from './components/Header';
 import BookList from './components/BookList';
-import Search from './components/Search';
 import About from './pages/About';
 import data from './models/local-books.json';
 
 const App = () => {
-
   const [books, setBooks] = useState(data);
   const [bookcase, setBookcase] = useState([]);
-  const [keyword, setKeyword] = useState('');
 
   const addToBookcase = (id) => {
     setBookcase(bookcase.concat(books.filter(book => book.id === id)));
@@ -42,19 +39,12 @@ const App = () => {
     });
   });
 
-  async function findBooks(value) {
-    const results = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${value}&filter=paid-ebooks&print-type=books&projection=lite`).then(res => res.json());
-    if (!results.error) {
-      setBooks(results.items.filter(result => bookcase.findIndex(book => result.id === book.id)===-1));
-    }
-  }
   return (
     <Router>
       <div className="container">
         <Route exact path="/" render={() => (
           <Fragment>
             <Header bookLength={bookcase.length} />
-            <Search keyword={keyword} findBooks={findBooks} setKeyword={setKeyword}/>
             <BookList books={books} stored="library" addToBookcase={addToBookcase} removeFromBookcase={removeFromBookcase} />
           </Fragment>
         )} />
